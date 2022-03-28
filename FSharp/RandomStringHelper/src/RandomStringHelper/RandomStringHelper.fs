@@ -67,14 +67,14 @@ module RandomStringHelper =
 
     /// Turn the bytes into a readable string from a predefined array of characters.
     let private encodeBytesAsCharacters (randomString : Span<char>) (args : StringCreateArgs) =
-        // Remember, ArrayPool returns an array with a minimum size that is likely larger than what you
-        //   request, so use the requested string length as the upper bound of the for loop, not the size
-        //   of the random bytes array.
 
-        // Module arithmetic on each byte requires the character set count to also be a byte. We control
+        // Modulo arithmetic on each byte requires the character set count to also be a byte. We control
         //   the character sets, so we know that this count will fit within a byte.
         let availableCharCount = Convert.ToByte(args.AvailableCharacters.Length)
 
+        // Remember, ArrayPool returns an array with a minimum size that is likely larger than what you
+        //   request, so use the requested string length as the upper bound of the for loop, not the size
+        //   of the random bytes array.
         // Loop through and encode each byte. We can't use collection functions because Span<T> can't
         //   be captured in a closure.
         let mutable ixByte = 0
