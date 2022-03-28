@@ -73,7 +73,7 @@ module RandomStringHelper =
         let availableCharCount = Convert.ToByte(args.AvailableCharacters.Length)
 
         // Remember, ArrayPool returns an array with a minimum size that is likely larger than what you
-        //   request, so use the requested string length as the upper bound of the for loop, not the size
+        //   request, so use the requested string length as the upper bound of the while loop, not the size
         //   of the random bytes array.
         // Loop through and encode each byte. We can't use collection functions because Span<T> can't
         //   be captured in a closure.
