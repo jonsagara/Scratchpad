@@ -35,19 +35,19 @@ module RandomStringHelper =
     let private _digits = "0123456789"
     let private _symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
 
-    let _availableCharactersAlphanumericOnly = 
+    let private _availableCharactersAlphanumericOnly = 
         _alphabetLower
             .ToCharArray()
             .Concat(_alphabetLower.ToUpper())
             .Concat(_digits)
             .ToArray()
 
-    let _availableCharactersPlusDashUnderscore =
+    let private _availableCharactersPlusDashUnderscore =
         _availableCharactersAlphanumericOnly
             .Concat([| '-'; '_' |])
             .ToArray()
 
-    let _availableCharacters =
+    let private _availableCharacters =
         _availableCharactersAlphanumericOnly
             .Concat(_symbols)
             .ToArray()
