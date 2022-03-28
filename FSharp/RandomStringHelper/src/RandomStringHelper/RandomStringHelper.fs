@@ -20,12 +20,6 @@ module RandomStringHelper =
         Length : int
         }
 
-    //[<IsReadOnly; Struct>]
-    //type private StringCreateArgs(availableCharacters: char[], randomBytes: byte[], length: int) =
-    //    member this.AvailableCharacters = availableCharacters
-    //    member this.RandomBytes = randomBytes
-    //    member this.Length = length
-
 
     //
     // Data
