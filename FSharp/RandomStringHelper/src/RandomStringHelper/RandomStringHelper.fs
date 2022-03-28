@@ -31,25 +31,25 @@ module RandomStringHelper =
     // Data
     //
 
-    let private alphabetLower = "abcdefghijklmnopqrstovwxyz"
-    let private digits = "0123456789"
-    let private symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
+    let private _alphabetLower = "abcdefghijklmnopqrstovwxyz"
+    let private _digits = "0123456789"
+    let private _symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
 
-    let availableCharactersAlphaNumericOnly = 
-        alphabetLower
+    let _availableCharactersAlphanumericOnly = 
+        _alphabetLower
             .ToCharArray()
-            .Concat(alphabetLower.ToUpper())
-            .Concat(digits)
+            .Concat(_alphabetLower.ToUpper())
+            .Concat(_digits)
             .ToArray()
 
-    let availableCharactersPlusDashUnderscore =
-        availableCharactersAlphaNumericOnly
+    let _availableCharactersPlusDashUnderscore =
+        _availableCharactersAlphanumericOnly
             .Concat([| '-'; '_' |])
             .ToArray()
 
-    let availableCharacters =
-        availableCharactersAlphaNumericOnly
-            .Concat(symbols)
+    let _availableCharacters =
+        _availableCharactersAlphanumericOnly
+            .Concat(_symbols)
             .ToArray()
 
 
@@ -89,7 +89,23 @@ module RandomStringHelper =
     /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
     /// can contain the characters in [a-zA-Z0-9], and optionally '-' and '_'.
     let private internalGenerateAlphanumericString (includeDashAndUnderscore: bool) (length: int) =
-        ()
+        
+        let characterSet = 
+            match includeDashAndUnderscore with
+            | true -> _availableCharactersPlusDashUnderscore
+            | false -> _availableCharactersAlphanumericOnly
+
+        let randomBytes = ArrayPool<byte>.Shared.Rent(length)
+        try
+            generateRandomBytes (randomBytes.AsSpan()) length
+
+            String.Create(
+                length, 
+                { AvailableCharacters = characterSet; RandomBytes = randomBytes; Length = length}, 
+                encodeBytesAsCharacters
+                )
+        finally
+            ArrayPool<byte>.Shared.Return(randomBytes)
 
 
     //
@@ -103,6 +119,9 @@ module RandomStringHelper =
     /// <param name="length">The length of the random string to generate.</param>
     /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9].</returns>
     let generateAlphanumericString (length: int) =
+        if length <= 0 then
+            invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
+
         internalGenerateAlphanumericString false length
 
     /// <summary>
@@ -112,6 +131,9 @@ module RandomStringHelper =
     /// <param name="length">The length of the random string to generate.</param>
     /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9-_].</returns>
     let generateAlphanumericStringWithDashUnderscore (length: int) =
+        if length <= 0 then
+            invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
+
         internalGenerateAlphanumericString true length
 
     /// <summary>
@@ -131,7 +153,7 @@ module RandomStringHelper =
 
             String.Create(
                 length, 
-                { AvailableCharacters = availableCharacters; RandomBytes = randomBytes; Length = length}, 
+                { AvailableCharacters = _availableCharacters; RandomBytes = randomBytes; Length = length}, 
                 encodeBytesAsCharacters
                 )
         finally
