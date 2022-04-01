@@ -1,5 +1,9 @@
 ﻿open RandomStringHelper
 
-printfn $"{nameof RandomStringHelper.generateAlphanumericString}: {RandomStringHelper.generateAlphanumericString 64}"
-printfn $"{nameof RandomStringHelper.generateAlphanumericStringWithDashUnderscore}: {RandomStringHelper.generateAlphanumericStringWithDashUnderscore 64}"
-printfn $"{nameof RandomStringHelper.generateRandomString}: {RandomStringHelper.generateRandomString 64}"
+let writeSample (functionName) (generatedString) =
+    printfn $"{functionName}:"
+    printfn $"  {generatedString}"
+
+writeSample (nameof RandomStringHelper.generateAlphanumericString) (RandomStringHelper.generateAlphanumericString 64)
+writeSample (nameof RandomStringHelper.generateAlphanumericStringWithDashUnderscore) (RandomStringHelper.generateAlphanumericStringWithDashUnderscore 64)
+writeSample (nameof RandomStringHelper.generateRandomString) (RandomStringHelper.generateRandomString 64)
