@@ -46,12 +46,12 @@ module RandomStringHelper =
             .Concat(_symbols)
             .ToArray()
 
-    //let private _alphanumericUppercase = 
-    //    _alphabetLower
-    //        .ToUpper()
-    //        .ToCharArray()
-    //        .Concat(_digits)
-    //        .ToArray()
+    let private _alphanumericUppercase = 
+        _alphabetLower
+            .ToUpper()
+            .ToCharArray()
+            .Concat(_digits)
+            .ToArray()
 
 
     //
@@ -86,15 +86,8 @@ module RandomStringHelper =
 
             ixByte <- ixByte + 1
 
-
-    /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
-    /// can contain the characters in [a-zA-Z0-9], and optionally '-' and '_'.
-    let private internalGenerateAlphanumericString (includeDashAndUnderscore: bool) (length: int) =
-        
-        let characterSet = 
-            match includeDashAndUnderscore with
-            | true -> _alphanumericMixedCasePlusDashUnderscore
-            | false -> _alphanumericMixedCase
+    /// Generate a random string, encoding the bytes with the characters in the specified character set.
+    let private internalGenerateString (availableCharacters : char[]) (length : int) =
 
         let randomBytes = ArrayPool<byte>.Shared.Rent(length)
         try
@@ -102,11 +95,22 @@ module RandomStringHelper =
 
             String.Create(
                 length, 
-                { AvailableCharacters = characterSet; RandomBytes = randomBytes; Length = length}, 
+                { AvailableCharacters = availableCharacters; RandomBytes = randomBytes; Length = length }, 
                 encodeBytesAsCharacters
                 )
         finally
             ArrayPool<byte>.Shared.Return(randomBytes)
+
+    /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
+    /// can contain the characters in [a-zA-Z0-9], and optionally '-' and '_'.
+    let private internalGenerateAlphanumericString (includeDashAndUnderscore : bool) (length : int) =
+        
+        let characterSet = 
+            match includeDashAndUnderscore with
+            | true -> _alphanumericMixedCasePlusDashUnderscore
+            | false -> _alphanumericMixedCase
+
+        internalGenerateString characterSet length
 
 
     //
@@ -139,25 +143,27 @@ module RandomStringHelper =
 
     /// <summary>
     /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
+    /// can contain the characters in [A-Z0-9].
+    /// </summary>
+    /// <param name="length">The length of the random string to generate.</param>
+    /// <returns>The random bytes encoded as a string that can contain the characters in [A-Z0-9].</returns>
+    let generateUppercaseAlphanumericString (length: int) =
+        if length <= 0 then
+            invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
+
+        internalGenerateString _alphanumericUppercase length
+
+    /// <summary>
+    /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
     /// can contain the characters in [a-zA-Z0-9-_], as well as the various symbol characters.
     /// </summary>
     /// <param name="length">The length of the random string to generate.</param>
     /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9-_], as 
     /// well as the various symbol characters.</returns>
-    let generateRandomString (length: int) =
+    let generateRandomString (length : int) =
         if length <= 0 then
             invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
 
-        let randomBytes = ArrayPool<byte>.Shared.Rent(length)
-        try
-            generateRandomBytes (randomBytes.AsSpan()) length
-
-            String.Create(
-                length, 
-                { AvailableCharacters = _alphanumericMixedCasePlusSymbols; RandomBytes = randomBytes; Length = length}, 
-                encodeBytesAsCharacters
-                )
-        finally
-            ArrayPool<byte>.Shared.Return(randomBytes)
+        internalGenerateString _alphanumericMixedCasePlusSymbols length
 
 
