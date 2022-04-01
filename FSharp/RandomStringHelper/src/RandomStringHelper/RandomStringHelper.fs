@@ -29,22 +29,29 @@ module RandomStringHelper =
     let private _digits = "0123456789"
     let private _symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
 
-    let private _availableCharactersAlphanumericOnly = 
+    let private _alphanumericMixedCase = 
         _alphabetLower
             .ToCharArray()
             .Concat(_alphabetLower.ToUpper())
             .Concat(_digits)
             .ToArray()
 
-    let private _availableCharactersPlusDashUnderscore =
-        _availableCharactersAlphanumericOnly
+    let private _alphanumericMixedCasePlusDashUnderscore =
+        _alphanumericMixedCase
             .Concat([| '-'; '_' |])
             .ToArray()
 
-    let private _availableCharacters =
-        _availableCharactersAlphanumericOnly
+    let private _alphanumericMixedCasePlusSymbols =
+        _alphanumericMixedCase
             .Concat(_symbols)
             .ToArray()
+
+    //let private _alphanumericUppercase = 
+    //    _alphabetLower
+    //        .ToUpper()
+    //        .ToCharArray()
+    //        .Concat(_digits)
+    //        .ToArray()
 
 
     //
@@ -86,8 +93,8 @@ module RandomStringHelper =
         
         let characterSet = 
             match includeDashAndUnderscore with
-            | true -> _availableCharactersPlusDashUnderscore
-            | false -> _availableCharactersAlphanumericOnly
+            | true -> _alphanumericMixedCasePlusDashUnderscore
+            | false -> _alphanumericMixedCase
 
         let randomBytes = ArrayPool<byte>.Shared.Rent(length)
         try
@@ -147,7 +154,7 @@ module RandomStringHelper =
 
             String.Create(
                 length, 
-                { AvailableCharacters = _availableCharacters; RandomBytes = randomBytes; Length = length}, 
+                { AvailableCharacters = _alphanumericMixedCasePlusSymbols; RandomBytes = randomBytes; Length = length}, 
                 encodeBytesAsCharacters
                 )
         finally
