@@ -26,7 +26,7 @@ module RandomStringHelper =
     // Data
     //
 
-    let private _alphabetLower = "abcdefghijklmnopqrstovwxyz"
+    let private _alphabetLower = "abcdefghijklmnopqrstuvwxyz"
     let private _digits = "0123456789"
     let private _symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
 
