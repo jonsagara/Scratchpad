@@ -18,7 +18,7 @@ module RandomStringHelper =
         AvailableCharacters : char[]
         RandomBytes : byte[]
         Length : int
-        Multiplier: int
+        NumberSize: int
         }
 
 
@@ -84,7 +84,10 @@ module RandomStringHelper =
         let mutable ixByte = 0
         while ixByte < args.Length do
 
-            let randomNumber = BitConverter.ToUInt32(randomBytes.Slice(ixByte * args.Multiplier, args.Multiplier))
+            // Get 4 bytes at a time.
+            let randomNumber = BitConverter.ToUInt32(randomBytes.Slice(ixByte * args.NumberSize, args.NumberSize))
+
+            // Mod by the number of available characters to index into the array.
             randomString[ixByte] <- args.AvailableCharacters[int(randomNumber % availableCharCount)]
 
             ixByte <- ixByte + 1
@@ -99,15 +102,15 @@ module RandomStringHelper =
         // See: https://stackoverflow.com/a/1344255
 
         // Generate 4 bytes of randomness for each character.
-        let multiplier = sizeof<uint32>
+        let numberSize = sizeof<uint32>
 
-        let randomBytes = ArrayPool<byte>.Shared.Rent(length * multiplier)
+        let randomBytes = ArrayPool<byte>.Shared.Rent(length * numberSize)
         try
-            generateRandomBytes (randomBytes.AsSpan()) (length * multiplier)
+            generateRandomBytes (randomBytes.AsSpan()) (length * numberSize)
 
             String.Create(
                 length, 
-                { AvailableCharacters = availableCharacters; RandomBytes = randomBytes; Length = length; Multiplier = multiplier }, 
+                { AvailableCharacters = availableCharacters; RandomBytes = randomBytes; Length = length; NumberSize = numberSize }, 
                 encodeBytesAsCharacters
                 )
         finally

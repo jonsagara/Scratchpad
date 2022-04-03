@@ -8,7 +8,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringHelpers", "src\StringHelpers\StringHelpers.csproj", "{6BDCC1A7-DD4C-4A55-9A74-CA4BAE2FFEDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StringHelpers", "src\StringHelpers\StringHelpers.csproj", "{6BDCC1A7-DD4C-4A55-9A74-CA4BAE2FFEDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringHelpers.Tests", "src\StringHelpers.Tests\StringHelpers.Tests.csproj", "{01584C81-1199-44F5-97EF-936F3C9F29B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +22,10 @@ Global
 		{6BDCC1A7-DD4C-4A55-9A74-CA4BAE2FFEDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BDCC1A7-DD4C-4A55-9A74-CA4BAE2FFEDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BDCC1A7-DD4C-4A55-9A74-CA4BAE2FFEDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01584C81-1199-44F5-97EF-936F3C9F29B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01584C81-1199-44F5-97EF-936F3C9F29B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01584C81-1199-44F5-97EF-936F3C9F29B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01584C81-1199-44F5-97EF-936F3C9F29B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

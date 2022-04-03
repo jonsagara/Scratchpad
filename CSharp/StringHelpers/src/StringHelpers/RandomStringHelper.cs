@@ -15,6 +15,7 @@ public static class RandomStringHelper
     private static readonly char[] _availableCharacters;
     private static readonly char[] _uppercaseAlphaAndNumbers;
 
+
     static RandomStringHelper()
     {
         _availableCharactersAlphaNumericOnly = AlphabetLower
@@ -156,16 +157,16 @@ public static class RandomStringHelper
         // See: https://stackoverflow.com/a/1344255
 
         // Generate 4 bytes of randomness for each character.
-        var multiplier = sizeof(uint);
+        var numberSize = sizeof(uint);
 
-        var randomStringBytes = ArrayPool<byte>.Shared.Rent(length * multiplier);
+        var randomStringBytes = ArrayPool<byte>.Shared.Rent(length * numberSize);
         try
         {
-            GenerateRandomBytes(randomStringBytes, length * multiplier);
+            GenerateRandomBytes(randomStringBytes, length * numberSize);
 
             return string.Create(
                 length: length,
-                state: new StringCreateArgs(AvailableCharacters: availableCharacters, RandomStringBytes: randomStringBytes, Length: length, Multiplier: multiplier),
+                state: new StringCreateArgs(AvailableCharacters: availableCharacters, RandomStringBytes: randomStringBytes, Length: length, NumberSize: numberSize),
                 action: EncodeBytesAsCharacters
                 );
         }
@@ -197,12 +198,12 @@ public static class RandomStringHelper
         for (var ixByte = 0; ixByte < args.Length; ixByte++)
         {
             // Get 4 bytes at a time.
-            var randomNumber = BitConverter.ToUInt32(randomBytes.Slice(start: ixByte * args.Multiplier, length: args.Multiplier));
+            var randomNumber = BitConverter.ToUInt32(randomBytes.Slice(start: ixByte * args.NumberSize, length: args.NumberSize));
 
             // Mod by the number of available characters to index into the array.
             destSpan[ixByte] = args.AvailableCharacters[randomNumber % args.AvailableCharacters.Length];
         }
     }
 
-    private record struct StringCreateArgs(char[] AvailableCharacters, byte[] RandomStringBytes, int Length, int Multiplier);
+    private record struct StringCreateArgs(char[] AvailableCharacters, byte[] RandomStringBytes, int Length, int NumberSize);
 }
