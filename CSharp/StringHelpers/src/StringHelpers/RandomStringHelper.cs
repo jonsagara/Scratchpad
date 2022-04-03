@@ -47,6 +47,7 @@ public static class RandomStringHelper
     /// <summary>
     /// Generates a cryptographically-strong array of random bytes and return them as a base64 url-encoded string. 
     /// </summary>
+    /// <remarks>The underlying <see cref="WebEncoders.Base64UrlEncode(ReadOnlySpan{byte})"/> removes any padding characters.</remarks>
     /// <param name="byteCount">The number of random bytes to generate.</param>
     /// <returns>The random bytes as a base64 url-encoded string.</returns>
     public static string GenerateRandomBase64UrlEncodedString(int byteCount)
@@ -72,6 +73,8 @@ public static class RandomStringHelper
     /// <summary>
     /// Generate a cryptographically-strong array of random bytes and return them as a base64-encoded string. 
     /// </summary>
+    /// <remarks>The underlying <see cref="Convert.ToBase64String(ReadOnlySpan{byte}, Base64FormattingOptions)"/> leaves
+    /// any padding intact.</remarks>
     /// <param name="byteCount">The number of random bytes to generate.</param>
     /// <returns>The random bytes as a base64-encoded string.</returns>
     public static string GenerateRandomBase64EncodedString(int byteCount)
