@@ -1,14 +1,18 @@
 ﻿using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.WebUtilities;
+
+[assembly: InternalsVisibleTo("StringHelpers.Tests")]
 
 namespace StringHelpers;
 
 public static class RandomStringHelper
 {
-    private const string AlphabetLower = "abcdefghijklmnopqrstuvwxyz";
-    private const string Digits = "0123456789";
-    private const string Symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
+    // These are internal so that we can see them in unit tests.
+    internal const string AlphabetLower = "abcdefghijklmnopqrstuvwxyz";
+    internal const string Digits = "0123456789";
+    internal const string Symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
 
     private static readonly char[] _availableCharactersAlphaNumericOnly;
     private static readonly char[] _availableCharactersPlusDashUnderscore;
