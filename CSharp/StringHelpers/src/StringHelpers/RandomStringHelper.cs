@@ -60,7 +60,7 @@ public static class RandomStringHelper
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(randomStringBytes);
+            ArrayPool<byte>.Shared.Return(randomStringBytes, clearArray: true);
         }
     }
 
@@ -85,7 +85,7 @@ public static class RandomStringHelper
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(randomStringBytes);
+            ArrayPool<byte>.Shared.Return(randomStringBytes, clearArray: true);
         }
     }
 
@@ -171,7 +171,7 @@ public static class RandomStringHelper
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(randomStringBytes);
+            ArrayPool<byte>.Shared.Return(randomStringBytes, clearArray: true);
         }
     }
 

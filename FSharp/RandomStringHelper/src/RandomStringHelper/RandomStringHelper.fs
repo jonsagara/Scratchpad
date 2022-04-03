@@ -111,7 +111,7 @@ module RandomStringHelper =
                 encodeBytesAsCharacters
                 )
         finally
-            ArrayPool<byte>.Shared.Return(randomBytes)
+            ArrayPool<byte>.Shared.Return(randomBytes, true)
 
     /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
     /// can contain the characters in [a-zA-Z0-9], and optionally '-' and '_'.
