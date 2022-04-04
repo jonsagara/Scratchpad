@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Xunit;
 
 namespace StringHelpers.Tests;
 
@@ -206,6 +207,49 @@ public class RandomStringHelperTests
             Assert.DoesNotContain("-", randomString);
             Assert.DoesNotContain("_", randomString);
         }
+    }
+
+
+    //
+    // Ensure that we can roundtrip our base64-encoded strings.
+    //
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(32)]
+    [InlineData(63)]
+    [InlineData(64)]
+    [InlineData(128)]
+    [InlineData(256)]
+    public void GenerateRandomBase64UrlEncodedString_CanDecodeEncodedString(int byteCount)
+    {
+        var encodedString = RandomStringHelper.GenerateRandomBase64UrlEncodedString(byteCount);
+
+        // The above method uses WebEncoders to encode, so use WebEncoders to decode. If the string is invalid,
+        //   this method should throw a FormatException. If not, no exception is thrown.
+        var exception = Record.Exception(() => WebEncoders.Base64UrlDecode(encodedString));
+
+        Assert.Null(exception);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(32)]
+    [InlineData(63)]
+    [InlineData(64)]
+    [InlineData(128)]
+    [InlineData(256)]
+    public void GenerateRandomBase64EncodedString_CanDecodeEncodedString(int byteCount)
+    {
+        var encodedString = RandomStringHelper.GenerateRandomBase64EncodedString(byteCount);
+
+        // The above method uses Convert.ToBase64String to encode, so use Convert.FromBase64String to decode.
+        //   If the string is invalid, this method should throw a FormatException. If not, no exception is thrown.
+        var exception = Record.Exception(() => Convert.FromBase64String(encodedString));
+
+        Assert.Null(exception);
     }
 
 

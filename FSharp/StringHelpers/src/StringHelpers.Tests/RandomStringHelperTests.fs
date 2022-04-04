@@ -2,6 +2,7 @@
 
 open System
 open System.Linq
+open Microsoft.AspNetCore.WebUtilities
 open StringHelpers
 open Xunit
 
@@ -230,3 +231,40 @@ type RandomStringHelperTests() =
             )
 
 
+    //
+    // Ensure that we can roundtrip our base64-encoded strings.
+    //
+
+    [<Theory>]
+    [<InlineData(1)>]
+    [<InlineData(10)>]
+    [<InlineData(32)>]
+    [<InlineData(63)>]
+    [<InlineData(64)>]
+    [<InlineData(128)>]
+    [<InlineData(256)>]
+    member this.generateRandomBase64UrlEncodedString_CanDecodeEncodedString (byteCount : int) =
+        let encodedString = RandomStringHelper.generateRandomBase64UrlEncodedString byteCount
+
+        // The above method uses WebEncoders to encode, so use WebEncoders to decode. If the string is invalid,
+        //   this method should throw a FormatException. If not, no exception is thrown.
+        let ex = Record.Exception(fun () -> WebEncoders.Base64UrlDecode(encodedString) |> ignore)
+
+        Assert.Null(ex);
+
+    [<Theory>]
+    [<InlineData(1)>]
+    [<InlineData(10)>]
+    [<InlineData(32)>]
+    [<InlineData(63)>]
+    [<InlineData(64)>]
+    [<InlineData(128)>]
+    [<InlineData(256)>]
+    member this.generateRandomBase64EncodedString_CanDecodeEncodedString (byteCount : int) =
+        let encodedString = RandomStringHelper.generateRandomBase64EncodedString byteCount
+
+        // The above method uses Convert.ToBase64String to encode, so use Convert.FromBase64String to decode.
+        //   If the string is invalid, this method should throw a FormatException. If not, no exception is thrown.
+        let ex = Record.Exception(fun () -> Convert.FromBase64String(encodedString) |> ignore)
+
+        Assert.Null(ex);
