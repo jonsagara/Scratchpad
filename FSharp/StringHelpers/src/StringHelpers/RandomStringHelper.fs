@@ -1,4 +1,5 @@
-﻿namespace StringHelpers
+﻿
+namespace StringHelpers
 
 /// Methods that generate random strings.
 module RandomStringHelper =
@@ -6,7 +7,12 @@ module RandomStringHelper =
     open System
     open System.Buffers
     open System.Linq
+    open System.Runtime.CompilerServices
     open System.Security.Cryptography
+
+    [<assembly:InternalsVisibleTo("StringHelpers.Tests")>]
+    do
+        ()
 
 
     //
@@ -26,8 +32,10 @@ module RandomStringHelper =
     // Data
     //
 
-    let private _alphabetLower = "abcdefghijklmnopqrstuvwxyz"
-    let private _digits = "0123456789"
+    [<Literal>]
+    let internal _alphabetLower = "abcdefghijklmnopqrstuvwxyz"
+    [<Literal>]
+    let internal _digits = "0123456789"
     let private _symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
 
     let private _alphanumericMixedCase = 
