@@ -37,6 +37,7 @@ module RandomStringHelper =
     let internal _alphabetLower = "abcdefghijklmnopqrstuvwxyz"
     [<Literal>]
     let internal _digits = "0123456789"
+    [<Literal>]
     let private _symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
 
     let private _alphanumericMixedCase = 
