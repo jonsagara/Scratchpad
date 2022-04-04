@@ -1,4 +1,4 @@
-﻿open RandomStringHelper
+﻿open StringHelpers
 
 let writeSample (functionName) (generatedString) =
     printfn $"{functionName}:"

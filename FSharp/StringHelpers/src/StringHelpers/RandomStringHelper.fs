@@ -1,4 +1,4 @@
-﻿namespace RandomStringHelper
+﻿namespace StringHelpers
 
 /// Methods that generate random strings.
 module RandomStringHelper =
