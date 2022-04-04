@@ -104,37 +104,37 @@ type RandomStringHelperTests() =
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateRandomBase64UrlEncodedString_InvalidByteCountThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomBase64UrlEncodedString(invalidByteCount) |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomBase64UrlEncodedString invalidByteCount |> ignore)
 
     [<Theory>]
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateRandomBase64EncodedString_InvalidByteCountThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomBase64EncodedString(invalidByteCount) |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomBase64EncodedString invalidByteCount |> ignore)
 
     [<Theory>]
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateUppercaseAlphanumericString_InvalidLengthThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateUppercaseAlphanumericString(invalidByteCount) |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateUppercaseAlphanumericString invalidByteCount |> ignore)
 
     [<Theory>]
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateAlphanumericString_InvalidLengthThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericString(invalidByteCount) |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericString invalidByteCount |> ignore)
 
     [<Theory>]
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateAlphanumericStringWithDashUnderscore_InvalidLengthThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericStringWithDashUnderscore(invalidByteCount) |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericStringWithDashUnderscore invalidByteCount |> ignore)
 
     [<Theory>]
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateRandomString_InvalidLengthThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomString(invalidByteCount) |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomString invalidByteCount |> ignore)
 
 
     //
