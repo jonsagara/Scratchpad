@@ -9,6 +9,7 @@ module RandomStringHelper =
     open System.Linq
     open System.Runtime.CompilerServices
     open System.Security.Cryptography
+    open Microsoft.AspNetCore.WebUtilities
 
     [<assembly:InternalsVisibleTo("StringHelpers.Tests")>]
     do
@@ -139,6 +140,24 @@ module RandomStringHelper =
     //
     // Public functions
     //
+
+    /// <summary>
+    /// Generates a cryptographically-strong array of random bytes and return them as a base64 url-encoded string. 
+    /// </summary>
+    /// <remarks>The underlying <see cref="WebEncoders.Base64UrlEncode(ReadOnlySpan{byte})"/> removes any padding characters.</remarks>
+    /// <param name="byteCount">The number of random bytes to generate.</param>
+    /// <returns>The random bytes as a base64 url-encoded string.</returns>
+    let generateRandomBase64UrlEncodedString (byteCount: int) =
+        if byteCount <= 0 then
+            raise (ArgumentOutOfRangeException(nameof byteCount, byteCount, $"Invalid {nameof(byteCount)} value '{byteCount}'. It must be greater than 0."))
+
+        let randomBytes = ArrayPool<byte>.Shared.Rent(byteCount)
+        try
+            generateRandomBytes (randomBytes.AsSpan()) byteCount
+
+            WebEncoders.Base64UrlEncode(randomBytes.AsSpan().Slice(0, byteCount));
+        finally
+            ArrayPool<byte>.Shared.Return(randomBytes, true)
 
     /// <summary>
     /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that

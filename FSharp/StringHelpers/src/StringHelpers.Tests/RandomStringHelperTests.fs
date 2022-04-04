@@ -1,5 +1,6 @@
 ﻿namespace StringHelpers.Tests
 
+open System
 open System.Linq
 open StringHelpers
 open Xunit
@@ -48,18 +49,18 @@ type RandomStringHelperTests() =
             Assert.Contains(digitChar, digitsLookup)
             )
 
-    (*
+
     //
     // Ensure that we can't pass an invalid length or byte count.
     //
 
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    public void GenerateRandomBase64UrlEncodedString_InvalidByteCountThrows(int invalidByteCount)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RandomStringHelper.GenerateRandomBase64UrlEncodedString(invalidByteCount));
-    }
+    [<Theory>]
+    [<InlineData(-1)>]
+    [<InlineData(0)>]
+    member this.generateRandomBase64UrlEncodedString_InvalidByteCountThrows (invalidByteCount : int) =
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomBase64UrlEncodedString(invalidByteCount) |> ignore)
+
+    (*
 
     [Theory]
     [InlineData(-1)]
