@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-using Xunit;
+﻿using Xunit;
 
 namespace StringHelpers.Tests;
 
@@ -226,9 +225,7 @@ public class RandomStringHelperTests
     {
         var encodedString = RandomStringHelper.GenerateRandomBase64UrlEncodedString(byteCount);
 
-        // The above method uses WebEncoders to encode, so use WebEncoders to decode. If the string is invalid,
-        //   this method should throw a FormatException. If not, no exception is thrown.
-        var exception = Record.Exception(() => WebEncoders.Base64UrlDecode(encodedString));
+        var exception = Record.Exception(() => RandomStringHelper.DecodeBase64UrlEncodedString(encodedString));
 
         Assert.Null(exception);
     }
@@ -245,9 +242,7 @@ public class RandomStringHelperTests
     {
         var encodedString = RandomStringHelper.GenerateRandomBase64EncodedString(byteCount);
 
-        // The above method uses Convert.ToBase64String to encode, so use Convert.FromBase64String to decode.
-        //   If the string is invalid, this method should throw a FormatException. If not, no exception is thrown.
-        var exception = Record.Exception(() => Convert.FromBase64String(encodedString));
+        var exception = Record.Exception(() => RandomStringHelper.DecodeBase64EncodedString(encodedString));
 
         Assert.Null(exception);
     }

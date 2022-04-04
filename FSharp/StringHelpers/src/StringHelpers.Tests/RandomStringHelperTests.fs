@@ -246,9 +246,7 @@ type RandomStringHelperTests() =
     member this.generateRandomBase64UrlEncodedString_CanDecodeEncodedString (byteCount : int) =
         let encodedString = RandomStringHelper.generateRandomBase64UrlEncodedString byteCount
 
-        // The above method uses WebEncoders to encode, so use WebEncoders to decode. If the string is invalid,
-        //   this method should throw a FormatException. If not, no exception is thrown.
-        let ex = Record.Exception(fun () -> WebEncoders.Base64UrlDecode(encodedString) |> ignore)
+        let ex = Record.Exception(fun () -> RandomStringHelper.decodeBase64UrlEncodedString(encodedString) |> ignore)
 
         Assert.Null(ex);
 
@@ -263,8 +261,6 @@ type RandomStringHelperTests() =
     member this.generateRandomBase64EncodedString_CanDecodeEncodedString (byteCount : int) =
         let encodedString = RandomStringHelper.generateRandomBase64EncodedString byteCount
 
-        // The above method uses Convert.ToBase64String to encode, so use Convert.FromBase64String to decode.
-        //   If the string is invalid, this method should throw a FormatException. If not, no exception is thrown.
-        let ex = Record.Exception(fun () -> Convert.FromBase64String(encodedString) |> ignore)
+        let ex = Record.Exception(fun () -> RandomStringHelper.decodeBase64EncodedString(encodedString) |> ignore)
 
         Assert.Null(ex);
