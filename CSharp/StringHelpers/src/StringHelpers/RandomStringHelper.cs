@@ -57,16 +57,16 @@ public static class RandomStringHelper
             throw new ArgumentOutOfRangeException(nameof(byteCount), $"Invalid {nameof(byteCount)} value '{byteCount}'. It must be greater than 0.");
         }
 
-        var randomStringBytes = ArrayPool<byte>.Shared.Rent(byteCount);
+        var randomBytes = ArrayPool<byte>.Shared.Rent(byteCount);
         try
         {
-            GenerateRandomBytes(randomStringBytes, byteCount);
+            GenerateRandomBytes(randomBytes, byteCount);
 
-            return WebEncoders.Base64UrlEncode(randomStringBytes.AsSpan().Slice(0, byteCount));
+            return WebEncoders.Base64UrlEncode(randomBytes.AsSpan().Slice(0, byteCount));
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(randomStringBytes, clearArray: true);
+            ArrayPool<byte>.Shared.Return(randomBytes, clearArray: true);
         }
     }
 
@@ -95,16 +95,16 @@ public static class RandomStringHelper
             throw new ArgumentOutOfRangeException(nameof(byteCount), $"Invalid {nameof(byteCount)} value '{byteCount}'. It must be greater than 0.");
         }
 
-        var randomStringBytes = ArrayPool<byte>.Shared.Rent(byteCount);
+        var randomBytes = ArrayPool<byte>.Shared.Rent(byteCount);
         try
         {
-            GenerateRandomBytes(randomStringBytes, byteCount);
+            GenerateRandomBytes(randomBytes, byteCount);
 
-            return Convert.ToBase64String(randomStringBytes.AsSpan().Slice(0, byteCount));
+            return Convert.ToBase64String(randomBytes.AsSpan().Slice(0, byteCount));
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(randomStringBytes, clearArray: true);
+            ArrayPool<byte>.Shared.Return(randomBytes, clearArray: true);
         }
     }
 
@@ -188,20 +188,20 @@ public static class RandomStringHelper
         // Generate 4 bytes of randomness for each character.
         var numberSize = sizeof(uint);
 
-        var randomStringBytes = ArrayPool<byte>.Shared.Rent(length * numberSize);
+        var randomBytes = ArrayPool<byte>.Shared.Rent(length * numberSize);
         try
         {
-            GenerateRandomBytes(randomStringBytes, length * numberSize);
+            GenerateRandomBytes(randomBytes, length * numberSize);
 
             return string.Create(
                 length: length,
-                state: new StringCreateArgs(AvailableCharacters: availableCharacters, RandomStringBytes: randomStringBytes, Length: length, NumberSize: numberSize),
+                state: new StringCreateArgs(AvailableCharacters: availableCharacters, RandomBytes: randomBytes, Length: length, NumberSize: numberSize),
                 action: EncodeBytesAsCharacters
                 );
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(randomStringBytes, clearArray: true);
+            ArrayPool<byte>.Shared.Return(randomBytes, clearArray: true);
         }
     }
 
@@ -222,7 +222,7 @@ public static class RandomStringHelper
         // Remember, ArrayPool returns an array with a minimum size that is likely larger than what you
         //   request, so use the requested string length as the upper bound of the for loop, not the size
         //   of the random bytes array.
-        var randomBytes = args.RandomStringBytes.AsSpan();
+        var randomBytes = args.RandomBytes.AsSpan();
 
         for (var ixByte = 0; ixByte < args.Length; ixByte++)
         {
@@ -234,5 +234,5 @@ public static class RandomStringHelper
         }
     }
 
-    private record struct StringCreateArgs(char[] AvailableCharacters, byte[] RandomStringBytes, int Length, int NumberSize);
+    private record struct StringCreateArgs(char[] AvailableCharacters, byte[] RandomBytes, int Length, int NumberSize);
 }
