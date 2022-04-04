@@ -46,7 +46,7 @@ module RandomStringHelper =
             .Concat(_digits)
             .ToArray()
 
-    let private _alphanumericMixedCasePlusDashUnderscore =
+    let internal _alphanumericMixedCasePlusDashUnderscore =
         _alphanumericMixedCase
             .Concat([| '-'; '_' |])
             .ToArray()

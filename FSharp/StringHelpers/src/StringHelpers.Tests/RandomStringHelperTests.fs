@@ -96,6 +96,15 @@ type RandomStringHelperTests() =
             Assert.Contains(digitChar, digitsLookup)
             )
 
+    [<Fact>]
+    member this.allAlphanumericMixedCasePlusDashUnderscoreCharactersAreValid() =
+        // Make a hash out of available characters.
+        let charLookup = RandomStringHelper._alphanumericMixedCasePlusDashUnderscore.ToHashSet()
+
+        [ 'a' .. 'z' ] @ [ 'A' .. 'Z'] @ [ '-'; '_' ]
+        |> List.iter (fun ch ->
+            Assert.Contains(ch, charLookup)
+            )
 
     //
     // Ensure that we can't pass an invalid length or byte count.

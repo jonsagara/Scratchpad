@@ -58,6 +58,22 @@ public class RandomStringHelperTests
         }
     }
 
+    [Fact]
+    public void AllAlphanumericMixedCasePlusDashUnderscoreCharactersAreValid()
+    {
+        // Make a hash out of available characters.
+        var charLookup = RandomStringHelper._availableCharactersPlusDashUnderscore.ToHashSet();
+
+        var testChars = new List<char>(RandomStringHelper.AlphabetLower);
+        testChars.AddRange(RandomStringHelper.AlphabetLower.ToUpper());
+        testChars.AddRange(new[] { '-', '_' });
+
+        foreach (var testChar in testChars)
+        {
+            Assert.Contains(testChar, charLookup);
+        }
+    }
+
 
     //
     // Ensure that we can't pass an invalid length or byte count.

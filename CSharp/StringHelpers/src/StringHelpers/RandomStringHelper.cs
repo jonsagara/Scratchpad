@@ -15,7 +15,7 @@ public static class RandomStringHelper
     internal const string Symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
 
     private static readonly char[] _availableCharactersAlphaNumericOnly;
-    private static readonly char[] _availableCharactersPlusDashUnderscore;
+    internal static readonly char[] _availableCharactersPlusDashUnderscore;
     private static readonly char[] _availableCharacters;
     private static readonly char[] _uppercaseAlphaAndNumbers;
 
