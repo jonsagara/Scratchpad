@@ -60,39 +60,36 @@ type RandomStringHelperTests() =
     member this.generateRandomBase64UrlEncodedString_InvalidByteCountThrows (invalidByteCount : int) =
         Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomBase64UrlEncodedString(invalidByteCount) |> ignore)
 
+    [<Theory>]
+    [<InlineData(-1)>]
+    [<InlineData(0)>]
+    member this.generateRandomBase64EncodedString_InvalidByteCountThrows (invalidByteCount : int) =
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomBase64EncodedString(invalidByteCount) |> ignore)
+
+    [<Theory>]
+    [<InlineData(-1)>]
+    [<InlineData(0)>]
+    member this.generateUppercaseAlphanumericString_InvalidLengthThrows (invalidByteCount : int) =
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateUppercaseAlphanumericString(invalidByteCount) |> ignore)
+
+    [<Theory>]
+    [<InlineData(-1)>]
+    [<InlineData(0)>]
+    member this.generateAlphanumericString_InvalidLengthThrows (invalidByteCount : int) =
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericString(invalidByteCount) |> ignore)
+
+    [<Theory>]
+    [<InlineData(-1)>]
+    [<InlineData(0)>]
+    member this.generateAlphanumericStringWithDashUnderscore_InvalidLengthThrows (invalidByteCount : int) =
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericStringWithDashUnderscore(invalidByteCount) |> ignore)
+
+    [<Theory>]
+    [<InlineData(-1)>]
+    [<InlineData(0)>]
+    member this.generateRandomString_InvalidLengthThrows (invalidByteCount : int) =
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomString(invalidByteCount) |> ignore)
     (*
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    public void GenerateRandomBase64EncodedString_InvalidByteCountThrows(int invalidByteCount)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RandomStringHelper.GenerateRandomBase64EncodedString(invalidByteCount));
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    public void GenerateUppercaseAlphanumericString_InvalidLengthThrows(int invalidLength)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RandomStringHelper.GenerateUppercaseAlphanumericString(invalidLength));
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    public void GenerateAlphanumericString_InvalidLengthThrows(int invalidLength)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RandomStringHelper.GenerateAlphanumericString(invalidLength));
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(0)]
-    public void GenerateRandomString_InvalidLengthThrows(int invalidLength)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RandomStringHelper.GenerateRandomString(invalidLength));
-    }
 
 
     //

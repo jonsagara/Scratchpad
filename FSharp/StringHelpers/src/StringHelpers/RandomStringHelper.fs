@@ -149,7 +149,7 @@ module RandomStringHelper =
     /// <returns>The random bytes as a base64 url-encoded string.</returns>
     let generateRandomBase64UrlEncodedString (byteCount: int) =
         if byteCount <= 0 then
-            raise (ArgumentOutOfRangeException(nameof byteCount, byteCount, $"Invalid {nameof(byteCount)} value '{byteCount}'. It must be greater than 0."))
+            raise (ArgumentOutOfRangeException(nameof byteCount, byteCount, $"Invalid {nameof byteCount} value '{byteCount}'. It must be greater than 0."))
 
         let randomBytes = ArrayPool<byte>.Shared.Rent(byteCount)
         try
@@ -160,6 +160,37 @@ module RandomStringHelper =
             ArrayPool<byte>.Shared.Return(randomBytes, true)
 
     /// <summary>
+    /// Generate a cryptographically-strong array of random bytes and return them as a base64-encoded string. 
+    /// </summary>
+    /// <remarks>The underlying <see cref="Convert.ToBase64String(ReadOnlySpan{byte}, Base64FormattingOptions)"/> leaves
+    /// any padding intact.</remarks>
+    /// <param name="byteCount">The number of random bytes to generate.</param>
+    /// <returns>The random bytes as a base64-encoded string.</returns>
+    let generateRandomBase64EncodedString (byteCount: int) =
+        if byteCount <= 0 then
+            raise (ArgumentOutOfRangeException(nameof byteCount, byteCount, $"Invalid {nameof byteCount} value '{byteCount}'. It must be greater than 0."))
+
+        let randomBytes = ArrayPool<byte>.Shared.Rent(byteCount)
+        try
+            generateRandomBytes (randomBytes.AsSpan()) byteCount
+
+            Convert.ToBase64String(randomBytes.AsSpan().Slice(0, byteCount))
+        finally
+            ArrayPool<byte>.Shared.Return(randomBytes, true)
+
+    /// <summary>
+    /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
+    /// can contain the characters in [A-Z0-9].
+    /// </summary>
+    /// <param name="length">The length of the random string to generate.</param>
+    /// <returns>The random bytes encoded as a string that can contain the characters in [A-Z0-9].</returns>
+    let generateUppercaseAlphanumericString (length: int) =
+        if length <= 0 then
+            raise (ArgumentOutOfRangeException(nameof length, length, $"Invalid {nameof length} value '{length}'. It must be greater than 0"))
+
+        internalGenerateString _alphanumericUppercase length
+
+    /// <summary>
     /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
     /// can contain the characters in [a-zA-Z0-9].
     /// </summary>
@@ -167,7 +198,7 @@ module RandomStringHelper =
     /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9].</returns>
     let generateAlphanumericString (length: int) =
         if length <= 0 then
-            invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
+            raise (ArgumentOutOfRangeException(nameof length, length, $"Invalid {nameof length} value '{length}'. It must be greater than 0"))
 
         internalGenerateAlphanumericString false length
 
@@ -179,21 +210,9 @@ module RandomStringHelper =
     /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9-_].</returns>
     let generateAlphanumericStringWithDashUnderscore (length: int) =
         if length <= 0 then
-            invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
+            raise (ArgumentOutOfRangeException(nameof length, length, $"Invalid {nameof length} value '{length}'. It must be greater than 0"))
 
         internalGenerateAlphanumericString true length
-
-    /// <summary>
-    /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
-    /// can contain the characters in [A-Z0-9].
-    /// </summary>
-    /// <param name="length">The length of the random string to generate.</param>
-    /// <returns>The random bytes encoded as a string that can contain the characters in [A-Z0-9].</returns>
-    let generateUppercaseAlphanumericString (length: int) =
-        if length <= 0 then
-            invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
-
-        internalGenerateString _alphanumericUppercase length
 
     /// <summary>
     /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
@@ -204,7 +223,7 @@ module RandomStringHelper =
     /// well as the various symbol characters.</returns>
     let generateRandomString (length : int) =
         if length <= 0 then
-            invalidArg (nameof length) (sprintf $"Invalid length value '%d{length}'. It must be greater than 0")
+            raise (ArgumentOutOfRangeException(nameof length, length, $"Invalid {nameof length} value '{length}'. It must be greater than 0"))
 
         internalGenerateString _alphanumericMixedCasePlusSymbols length
 
