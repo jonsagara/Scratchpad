@@ -6,6 +6,52 @@ open StringHelpers
 open Xunit
 
 type RandomStringHelperTests() =
+
+    //
+    // Private methods
+    //
+
+    /// Perform integer division, and then perform ceil() on the quotient and remainder.
+    let ceilingDivision (dividend : int) (divisor : int) =
+        // This commented out code has the same result, but the longer version below is much clearer
+        //   in its meaning. Since we're only using it for tests, we don't need the absolute best performance.
+        //
+        // (dividend + divisor - 1) / divisor;
+
+        let (quotient, remainder) = Math.DivRem(dividend, divisor)
+
+        if quotient >= 0 then
+            // The result was positive. Since we're rounding toward positive infinity, treat remainders of 
+            //   any non-zero magnitude the same: if they're non-zero, we need to add one to the quotient.
+            if remainder <> 0 then
+                // Numbers didn't divide evenly. Round up to the nearest integer.
+                quotient + 1
+            else
+                // Numbers divided evenly. Return the quotient as-is.
+                quotient
+        else
+            // When the quotient is negative, rounding "up" to the nearest integer (i.e., towards positive
+            //   infinity) means discarding any remainder and keeping just the quotient.
+            quotient
+
+    let getExpectedPaddedBase64StringLength (stringLength : int) =
+        // Three 8-bit bytes of input data (3 * 8 bits = 24 bits) can be represented by four 6-bit
+        //   Base64 digits (4 * 6 bits = 24 bits). So:
+        //
+        //   4 * ceil(input string length / 3) = number of base 64 digits required to represent the input data.
+        4 * ceilingDivision stringLength 3
+
+    let getExpectedUnpaddedBase64UrlEncodedStringLength (stringLength : int) =
+        // The string is not padded with extra characters to fit an even 24 bits for 4 Base64 characters.
+        //   There are 6 bits per Base64 character, so ceil(total bits / 6) is the number of characters
+        //   encoded as Base64.
+        let bits = 8 * stringLength;
+        ceilingDivision bits 6
+
+
+    //
+    // Test methods
+    //
     
     [<Fact>]
     member this.alphabetLowerHas26Characters() =
@@ -89,164 +135,98 @@ type RandomStringHelperTests() =
     [<InlineData(0)>]
     member this.generateRandomString_InvalidLengthThrows (invalidByteCount : int) =
         Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateRandomString(invalidByteCount) |> ignore)
-    (*
 
 
     //
     // Ensure the length of the returned string matches the expected length.
     //
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(10)]
-    [InlineData(32)]
-    [InlineData(63)]
-    [InlineData(64)]
-    [InlineData(128)]
-    [InlineData(256)]
-    public void GenerateRandomBase64UrlEncodedString_ReturnedStringLengthMatches(int length)
-    {
-        var expectedLength = GetExpectedUnpaddedBase64UrlEncodedStringLength(length);
-        var generatedString = RandomStringHelper.GenerateRandomBase64UrlEncodedString(length);
+    [<Theory>]
+    [<InlineData(1)>]
+    [<InlineData(10)>]
+    [<InlineData(32)>]
+    [<InlineData(63)>]
+    [<InlineData(64)>]
+    [<InlineData(128)>]
+    [<InlineData(256)>]
+    member this.generateRandomBase64UrlEncodedString_ReturnedStringLengthMatches (length : int) =
+        let expectedLength = getExpectedUnpaddedBase64UrlEncodedStringLength length
+        let generatedString = RandomStringHelper.generateRandomBase64UrlEncodedString length
+        
+        Assert.NotNull(generatedString)
+        Assert.Equal(expectedLength, generatedString.Length)
 
-        Assert.NotNull(generatedString);
-        Assert.Equal(expectedLength, generatedString.Length);
-    }
+    [<Theory>]
+    [<InlineData(1)>]
+    [<InlineData(10)>]
+    [<InlineData(32)>]
+    [<InlineData(63)>]
+    [<InlineData(64)>]
+    [<InlineData(128)>]
+    [<InlineData(256)>]
+    member this.generateRandomBase64EncodedString_ReturnedStringLengthMatches (length : int) =
+        let expectedLength = getExpectedPaddedBase64StringLength length
+        let generatedString = RandomStringHelper.generateRandomBase64EncodedString length
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(10)]
-    [InlineData(32)]
-    [InlineData(63)]
-    [InlineData(64)]
-    [InlineData(128)]
-    [InlineData(256)]
-    public void GenerateRandomBase64EncodedString_ReturnedStringLengthMatches(int length)
-    {
-        var expectedLength = GetExpectedPaddedBase64StringLength(length);
-        var generatedString = RandomStringHelper.GenerateRandomBase64EncodedString(length);
+        Assert.NotNull(generatedString)
+        Assert.Equal(expectedLength, generatedString.Length)
 
-        Assert.NotNull(generatedString);
-        Assert.Equal(expectedLength, generatedString.Length);
-    }
+    [<Theory>]
+    [<InlineData(1)>]
+    [<InlineData(10)>]
+    [<InlineData(32)>]
+    [<InlineData(63)>]
+    [<InlineData(64)>]
+    [<InlineData(128)>]
+    [<InlineData(256)>]
+    member this.generateUppercaseAlphanumericString_ReturnedStringLengthMatches (length : int) =
+        let generatedString = RandomStringHelper.generateUppercaseAlphanumericString length
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(10)]
-    [InlineData(32)]
-    [InlineData(63)]
-    [InlineData(64)]
-    [InlineData(128)]
-    [InlineData(256)]
-    public void GenerateUppercaseAlphanumericString_ReturnedStringLengthMatches(int length)
-    {
-        var generatedString = RandomStringHelper.GenerateUppercaseAlphanumericString(length);
+        Assert.NotNull(generatedString)
+        Assert.Equal(length, generatedString.Length)
 
-        Assert.NotNull(generatedString);
-        Assert.Equal(length, generatedString.Length);
-    }
+    [<Theory>]
+    [<InlineData(1)>]
+    [<InlineData(10)>]
+    [<InlineData(32)>]
+    [<InlineData(63)>]
+    [<InlineData(64)>]
+    [<InlineData(128)>]
+    [<InlineData(256)>]
+    member this.generateAlphanumericString_ReturnedStringLengthMatches (length : int) =
+        let generatedString = RandomStringHelper.generateAlphanumericString length
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(10)]
-    [InlineData(32)]
-    [InlineData(63)]
-    [InlineData(64)]
-    [InlineData(128)]
-    [InlineData(256)]
-    public void GenerateAlphanumericString_ReturnedStringLengthMatches(int length)
-    {
-        var generatedString = RandomStringHelper.GenerateAlphanumericString(length);
+        Assert.NotNull(generatedString)
+        Assert.Equal(length, generatedString.Length)
 
-        Assert.NotNull(generatedString);
-        Assert.Equal(length, generatedString.Length);
-    }
+    [<Theory>]
+    [<InlineData(1)>]
+    [<InlineData(10)>]
+    [<InlineData(32)>]
+    [<InlineData(63)>]
+    [<InlineData(64)>]
+    [<InlineData(128)>]
+    [<InlineData(256)>]
+    member this.generateRandomString_ReturnedStringLengthMatches (length : int) =
+        let randomString = RandomStringHelper.generateRandomString length
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(10)]
-    [InlineData(32)]
-    [InlineData(63)]
-    [InlineData(64)]
-    [InlineData(128)]
-    [InlineData(256)]
-    public void GenerateRandomString_ReturnedStringLengthMatches(int length)
-    {
-        var randomString = RandomStringHelper.GenerateRandomString(length);
-
-        Assert.NotNull(randomString);
-        Assert.Equal(length, randomString.Length);
-    }
+        Assert.NotNull(randomString)
+        Assert.Equal(length, randomString.Length)
 
 
     //
     // Ensure the returned string has no dashes and no underscores.
     //
 
-    [Fact]
-    public void GenerateAlphanumericString_ReturnsStringWithNoDashesAndNoUnderscores()
-    {
-        for (var ixIteration = 0; ixIteration < 100; ixIteration++)
-        {
-            var randomString = RandomStringHelper.GenerateAlphanumericString(length: 64, includeDashAndUnderscore: false);
+    [<Fact>]
+    member this.generateAlphanumericString_ReturnsStringWithNoDashesAndNoUnderscores () =
+        [| 0 .. 99 |]
+        |> Array.iter (fun ixIteration ->
+            let randomString = RandomStringHelper.generateAlphanumericString 64
 
-            Assert.NotNull(randomString);
-            Assert.DoesNotContain("-", randomString);
-            Assert.DoesNotContain("_", randomString);
-        }
-    }
-
-
-    //
-    // Private methods
-    //
-
-    private int CeilingDivision(int dividend, int divisor)
-    {
-        // This commented out code has the same result, but the longer version below is much clearer
-        //   in its meaning. Since we're only using it for tests, we don't need the absolute best performance.
-        //
-        // return (dividend + divisor - 1) / divisor;
-
-        var (quotient, remainder) = Math.DivRem(dividend, divisor);
-
-        if (quotient >= 0)
-        {
-            // The result was positive. Since we're rounding toward positive infinity, treat remainders of 
-            //   any non-zero magnitude the same: if they're non-zero, we need to add one to the quotient.
-            if (remainder != 0)
-            {
-                // Numbers didn't divide evenly. Round up to the nearest integer.
-                return quotient + 1;
-            }
-
-            // Numbers divided evenly. Return the quotient as-is.
-            return quotient;
-        }
-
-        // When the quotient is negative, rounding "up" to the nearest integer (i.e., towards positive
-        //   infinity) means discarding any remainder and keeping just the quotient.
-        return quotient;
-    }
-
-    private int GetExpectedPaddedBase64StringLength(int stringLength)
-    {
-        // Three 8-bit bytes of input data (3 * 8 bits = 24 bits) can be represented by four 6-bit
-        //   Base64 digits (4 * 6 bits = 24 bits). So:
-        //
-        //   4 * ceil(input string length / 3) = number of base 64 digits required to represent the input data.
-        return 4 * CeilingDivision(stringLength, 3);
-    }
-
-
-    private int GetExpectedUnpaddedBase64UrlEncodedStringLength(int stringLength)
-    {
-        // The string is not padded with extra characters to fit an even 24 bits for 4 Base64 characters.
-        //   There are 6 bits per Base64 character, so ceil(total bits / 6) is the number of characters
-        //   encoded as Base64.
-        var bits = 8 * stringLength;
-        return CeilingDivision(bits, 6);
-    }
-    *)
+            Assert.NotNull(randomString)
+            Assert.DoesNotContain("-", randomString)
+            Assert.DoesNotContain("_", randomString)
+            )
 
 
