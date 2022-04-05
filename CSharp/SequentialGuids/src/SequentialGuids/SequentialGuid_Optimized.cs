@@ -67,19 +67,25 @@ public class SequentialGuid_Optimized
 
     public static SequentialGuid_Optimized operator ++(SequentialGuid_Optimized sequentialGuid)
     {
+        // Copy the current Guid's value into a byte array.
         Span<byte> currentGuidBytes = stackalloc byte[16];
         sequentialGuid.CurrentGuid.TryWriteBytes(currentGuidBytes);
 
-        for (int mapIndex = 0; mapIndex < 16; mapIndex++)
+        for (int ixSqlOrderMap = 0; ixSqlOrderMap < 16; ixSqlOrderMap++)
         {
-            int bytesIndex = _sqlOrderMap[mapIndex];
-            currentGuidBytes[bytesIndex]++;
-            if (currentGuidBytes[bytesIndex] != 0)
+            // Get the byte to increment, and increment it.
+            int ixByteToIncrement = _sqlOrderMap[ixSqlOrderMap];
+            currentGuidBytes[ixByteToIncrement]++;
+
+            // If the byte we just modified is not 0, exit. We don't need to increment
+            //   more significant bytes.
+            if (currentGuidBytes[ixByteToIncrement] != 0)
             {
-                break; // No need to increment more significant bytes
+                break;
             }
         }
 
+        // Update the current Guid with the newly-incremented Guid.
         sequentialGuid.CurrentGuid = new Guid(currentGuidBytes);
         return sequentialGuid;
     }
