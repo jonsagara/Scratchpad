@@ -42,9 +42,8 @@ public class SequentialGuid_Optimized
 
         // Get the current time of day.
         // NOTE: SQL Server is accurate to 1/300th of a millisecond, so we divide by 3.333333 
-        TimeSpan timeOfDay = now.TimeOfDay;
         Span<byte> msecsBytes = stackalloc byte[8];
-        BinaryPrimitives.WriteInt64BigEndian(msecsBytes, (long)(timeOfDay.TotalMilliseconds / 3.333333));
+        BinaryPrimitives.WriteInt64BigEndian(msecsBytes, (long)(now.TimeOfDay.TotalMilliseconds / 3.333333));
 
         // Copy the days and milliseconds bytes into the end of the Guid, starting at offset 10.
         daysBytes.Slice(start: daysBytes.Length - 2, length: 2).CopyTo(guidBytes.Slice(start: guidBytes.Length - 6));
@@ -71,10 +70,10 @@ public class SequentialGuid_Optimized
         Span<byte> currentGuidBytes = stackalloc byte[16];
         sequentialGuid.CurrentGuid.TryWriteBytes(currentGuidBytes);
 
-        for (int ixSqlOrderMap = 0; ixSqlOrderMap < 16; ixSqlOrderMap++)
+        for (var ixSqlOrderMap = 0; ixSqlOrderMap < 16; ixSqlOrderMap++)
         {
             // Get the byte to increment, and increment it.
-            int ixByteToIncrement = _sqlOrderMap[ixSqlOrderMap];
+            var ixByteToIncrement = _sqlOrderMap[ixSqlOrderMap];
             currentGuidBytes[ixByteToIncrement]++;
 
             // If the byte we just modified is not 0, exit. We don't need to increment
