@@ -67,17 +67,20 @@ public class SequentialGuid_Optimized
 
     public static SequentialGuid_Optimized operator ++(SequentialGuid_Optimized sequentialGuid)
     {
-        byte[] bytes = sequentialGuid.CurrentGuid.ToByteArray();
+        Span<byte> currentGuidBytes = stackalloc byte[16];
+        sequentialGuid.CurrentGuid.TryWriteBytes(currentGuidBytes);
+
         for (int mapIndex = 0; mapIndex < 16; mapIndex++)
         {
             int bytesIndex = _sqlOrderMap[mapIndex];
-            bytes[bytesIndex]++;
-            if (bytes[bytesIndex] != 0)
+            currentGuidBytes[bytesIndex]++;
+            if (currentGuidBytes[bytesIndex] != 0)
             {
                 break; // No need to increment more significant bytes
             }
         }
-        sequentialGuid.CurrentGuid = new Guid(bytes);
+
+        sequentialGuid.CurrentGuid = new Guid(currentGuidBytes);
         return sequentialGuid;
     }
 }
