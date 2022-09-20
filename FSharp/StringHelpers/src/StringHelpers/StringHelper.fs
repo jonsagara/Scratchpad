@@ -7,6 +7,27 @@ module StringHelper =
     open System.Text
     open System.Text.RegularExpressions
 
+
+    //
+    // General
+    //
+
+    /// <summary>
+    /// If null, return null. Otherwise, trim any leading and trailing white space.
+    /// </summary>
+    let nullSafeTrim (value : string) =
+        match isNull(value) with
+        | true -> null
+        | false -> value.Trim()
+
+    /// Trim any leading and trailing white space.
+    let trim (value : string) = value.Trim()
+
+
+    //
+    // Slugs
+    //
+
     /// When the caller doesn't provide an explicit max length, default to 50 characters.
     [<Literal>]
     let private DefaultMaxSlugLengthInChars = 50
@@ -70,17 +91,6 @@ module StringHelper =
     /// </summary>
     let private collapseMultipleWhiteSpaceToSingleSpace (value : string) =
         Regex.Replace(value, @"\s+", " ")
-
-    /// <summary>
-    /// If null, return null. Otherwise, trim any leading and trailing white space.
-    /// </summary>
-    let nullSafeTrim (value : string) =
-        match isNull(value) with
-        | true -> null
-        | false -> value.Trim()
-
-    /// Trim any leading and trailing white space.
-    let trim (value : string) = value.Trim()
 
     /// <summary>
     /// Limit the length of the slug to a maximum number of characters.
