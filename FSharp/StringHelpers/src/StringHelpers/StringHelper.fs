@@ -106,17 +106,13 @@ module StringHelper =
             value
             // We know we're passing in a non-null string, so we're going to get a non-null string back.
             |> removeDiacritics
-            // Remove invalid chars.
             |> removeInvalidCharacters
-            // Collapse multiple consecutive white spaces into one space.
             |> collapseMultipleWhiteSpaceToSingleSpace
-            // Trim any leading and trailing white space.
             |> trim
             // Truncate the slug at the maximum allowed characters.
             |> truncateSlug maxLengthInChars
             // Trim any leading and trailing white space from the truncated slug.
             |> trim
-            // Replace white space with hyphens.
             |> replaceWhiteSpaceWithHyphens
 
     /// <summary>
