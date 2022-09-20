@@ -7,8 +7,9 @@ module StringHelper =
     open System.Text
     open System.Text.RegularExpressions
 
+    /// When the caller doesn't provide an explicit max length, default to 50 characters.
     [<Literal>]
-    let private MAX_SLUG_CHAR_LENGTH = 50
+    let private DefaultMaxSlugLengthInChars = 50
 
     /// <summary>
     /// Returns true if the character is NOT a non-spacing mark; false if it is.
@@ -82,12 +83,7 @@ module StringHelper =
     /// Limit the length of the slug to a maximum number of characters.
     /// </summary>
     let private truncateSlug (maxLengthInChars : int) (value : string) =
-        let slugLength =
-            if value.Length <= maxLengthInChars then
-                value.Length
-            else
-                maxLengthInChars
-
+        let slugLength = Math.Min(value.Length, maxLengthInChars)
         value.Substring(0, slugLength)
 
     /// <summary>
@@ -126,7 +122,7 @@ module StringHelper =
     let toSlugMaxLength (maxLengthInChars: int) (value: string) =
         let maxLength =
             match maxLengthInChars < 1 with
-            | true -> MAX_SLUG_CHAR_LENGTH
+            | true -> DefaultMaxSlugLengthInChars
             | false -> maxLengthInChars
 
         toSlugInternal maxLength value
@@ -135,4 +131,4 @@ module StringHelper =
     /// Convert a string into a URL- and file name-safe slug. Constrain to a maximum length of 50 characters.
     /// </summary>
     let toSlug (value: string) =
-        toSlugMaxLength MAX_SLUG_CHAR_LENGTH value
+        toSlugMaxLength DefaultMaxSlugLengthInChars value
