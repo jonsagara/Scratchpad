@@ -74,10 +74,13 @@ module StringHelper =
     /// <summary>
     /// If null, return null. Otherwise, trim any leading and trailing white space.
     /// </summary>
-    let private nullSafeTrim (value : string) =
+    let nullSafeTrim (value : string) =
         match isNull(value) with
         | true -> null
         | false -> value.Trim()
+
+    /// Trim any leading and trailing white space.
+    let trim (value : string) = value.Trim()
 
     /// <summary>
     /// Limit the length of the slug to a maximum number of characters.
@@ -108,11 +111,11 @@ module StringHelper =
             // Collapse multiple consecutive white spaces into one space.
             |> collapseMultipleWhiteSpaceToSingleSpace
             // Trim any leading and trailing white space.
-            |> nullSafeTrim
+            |> trim
             // Truncate the slug at the maximum allowed characters.
             |> truncateSlug maxLengthInChars
             // Trim any leading and trailing white space from the truncated slug.
-            |> nullSafeTrim
+            |> trim
             // Replace white space with hyphens.
             |> replaceWhiteSpaceWithHyphens
 
