@@ -16,7 +16,7 @@ module StringHelper =
     /// If null, return null. Otherwise, trim any leading and trailing white space.
     /// </summary>
     let nullSafeTrim (value : string) =
-        match isNull(value) with
+        match isNull value with
         | true -> null
         | false -> value.Trim()
 
