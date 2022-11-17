@@ -16,6 +16,9 @@ type ByteExtensions =
     /// </remarks>
     [<Extension>]
     static member ToHexString (bytes: byte[], [<Optional; DefaultParameterValue(false)>] includeDashes: bool) =
+
+        ArgumentNullException.ThrowIfNull(bytes)
+
         match includeDashes with
         | true -> BitConverter.ToString(bytes)
         | false -> BitConverter.ToString(bytes).Replace("-", String.Empty)
