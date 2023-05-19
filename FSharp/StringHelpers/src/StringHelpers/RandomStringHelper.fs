@@ -71,11 +71,9 @@ module RandomStringHelper =
 
     /// Generate a cryptographically-strong sequence of bytes.
     let private generateRandomBytes (buffer : Span<byte>) (length : int) =
-        use rng = RandomNumberGenerator.Create()
-
         // A pooled array is likely larger than the requested size. Only generate the requested number
         //   of bytes.
-        rng.GetBytes(buffer.Slice(0, length))
+        RandomNumberGenerator.Fill(buffer.Slice(0, length))
 
     /// Turn the bytes into a readable string from a predefined array of characters.
     let private encodeBytesAsCharacters (randomString : Span<char>) (args : StringCreateArgs) =

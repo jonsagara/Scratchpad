@@ -21,4 +21,4 @@ type ByteExtensions =
 
         match includeDashes with
         | true -> BitConverter.ToString(bytes)
-        | false -> BitConverter.ToString(bytes).Replace("-", String.Empty)
+        | false -> Convert.ToHexString(bytes)
