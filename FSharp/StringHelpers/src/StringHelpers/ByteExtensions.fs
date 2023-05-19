@@ -22,3 +22,10 @@ type ByteExtensions =
         match includeDashes with
         | true -> BitConverter.ToString(bytes)
         | false -> Convert.ToHexString(bytes)
+
+    /// <summary>
+    /// Convert each byte to its equivalent hexadecimal string representation, and return them all as a string.
+    /// </summary>
+    [<Extension>]
+    static member ToHexString (bytes: ReadOnlySpan<byte>) =
+        Convert.ToHexString(bytes)
