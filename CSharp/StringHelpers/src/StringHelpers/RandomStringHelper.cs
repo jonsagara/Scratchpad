@@ -210,11 +210,9 @@ public static class RandomStringHelper
     /// </summary>
     private static void GenerateRandomBytes(Span<byte> buffer, int length)
     {
-        using var rng = RandomNumberGenerator.Create();
-
         // A pooled array is likely larger than the requested size. Only generate the requested number
         //   of bytes.
-        rng.GetBytes(buffer.Slice(0, length));
+        RandomNumberGenerator.Fill(buffer.Slice(0, length));
     }
 
     private static void EncodeBytesAsCharacters(Span<char> destSpan, StringCreateArgs args)
