@@ -99,7 +99,7 @@ type RandomStringHelperTests() =
     [<Fact>]
     member this.allAlphanumericMixedCasePlusDashUnderscoreCharactersAreValid() =
         // Make a hash out of available characters.
-        let charLookup = RandomStringHelper._alphanumericMixedCasePlusDashUnderscore.ToHashSet()
+        let charLookup = RandomStringHelper._alphanumericPlusDashUnderscore.ToHashSet()
 
         [ 'a' .. 'z' ] @ [ 'A' .. 'Z'] @ [ '-'; '_' ]
         |> List.iter (fun ch ->
