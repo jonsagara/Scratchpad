@@ -14,33 +14,36 @@ public static class RandomStringHelper
     internal const string Digits = "0123456789";
     internal const string Symbols = "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
 
-    private static readonly char[] _availableCharactersAlphaNumericOnly;
-    internal static readonly char[] _availableCharactersPlusDashUnderscore;
-    private static readonly char[] _availableCharacters;
-    private static readonly char[] _uppercaseAlphaAndNumbers;
+    private static readonly char[] _alphanumeric;
+    internal static readonly char[] _alphanumericPlusDashUnderscore;
+    private static readonly char[] _alphanumericPlusSymbols;
+    private static readonly char[] _uppercaseAlphanumeric;
 
 
     static RandomStringHelper()
     {
-        _availableCharactersAlphaNumericOnly = AlphabetLower
-            .ToCharArray()
-            .Concat(AlphabetLower.ToUpper())
-            .Concat(Digits)
-            .ToArray();
+        _alphanumeric = [
+            .. AlphabetLower,
+            .. AlphabetLower.ToUpper(),
+            .. Digits,
+            ];
 
-        _availableCharactersPlusDashUnderscore = _availableCharactersAlphaNumericOnly
-            .Concat(new[] { '-', '_' })
-            .ToArray();
+        _alphanumericPlusDashUnderscore = [
+            .. _alphanumeric,
+            '-',
+            '_',
+            ];
 
-        _availableCharacters = _availableCharactersAlphaNumericOnly
-            .Concat(Symbols)
-            .ToArray();
+        // Symbols includes dash and underscore.
+        _alphanumericPlusSymbols = [
+            .. _alphanumeric,
+            .. Symbols,
+            ];
 
-        _uppercaseAlphaAndNumbers = AlphabetLower
-            .ToUpper()
-            .ToCharArray()
-            .Concat(Digits)
-            .ToArray();
+        _uppercaseAlphanumeric = [
+            .. AlphabetLower.ToUpper(),
+            .. Digits
+            ];
     }
 
 
@@ -52,10 +55,7 @@ public static class RandomStringHelper
     /// <returns>The random bytes as a base64 url-encoded string.</returns>
     public static string GenerateRandomBase64UrlEncodedString(int byteCount)
     {
-        if (byteCount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(byteCount), $"Invalid {nameof(byteCount)} value '{byteCount}'. It must be greater than 0.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(byteCount, 0);
 
         var randomBytes = ArrayPool<byte>.Shared.Rent(byteCount);
         try
@@ -90,10 +90,7 @@ public static class RandomStringHelper
     /// <returns>The random bytes as a base64-encoded string.</returns>
     public static string GenerateRandomBase64EncodedString(int byteCount)
     {
-        if (byteCount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(byteCount), $"Invalid {nameof(byteCount)} value '{byteCount}'. It must be greater than 0.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(byteCount, 0);
 
         var randomBytes = ArrayPool<byte>.Shared.Rent(byteCount);
         try
@@ -127,12 +124,9 @@ public static class RandomStringHelper
     /// <returns>The random bytes encoded as a string that can contain the characters in [A-Z0-9].</returns>
     public static string GenerateUppercaseAlphanumericString(int length)
     {
-        if (length <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(length), $"Invalid {nameof(length)} value '{length}'. It must be greater than 0.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(length, 0);
 
-        return InternalGenerateString(_uppercaseAlphaAndNumbers, length);
+        return RandomNumberGenerator.GetString(_uppercaseAlphanumeric, length);
     }
 
     /// <summary>
@@ -143,16 +137,11 @@ public static class RandomStringHelper
     /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9-_].</returns>
     public static string GenerateAlphanumericString(int length, bool includeDashAndUnderscore = true)
     {
-        if (length <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(length), $"Invalid {nameof(length)} value '{length}'. It must be greater than 0.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(length, 0);
 
-        var availableCharacters = includeDashAndUnderscore
-            ? _availableCharactersPlusDashUnderscore
-            : _availableCharactersAlphaNumericOnly;
-
-        return InternalGenerateString(availableCharacters, length);
+        return includeDashAndUnderscore
+            ? RandomNumberGenerator.GetString(_alphanumericPlusDashUnderscore, length)
+            : RandomNumberGenerator.GetString(_alphanumeric, length);
     }
 
     /// <summary>
@@ -164,46 +153,15 @@ public static class RandomStringHelper
     /// well as the various symbol characters.</returns>
     public static string GenerateRandomString(int length)
     {
-        if (length <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(length), $"Invalid {nameof(length)} value '{length}'. It must be greater than 0.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(length, 0);
 
-        return InternalGenerateString(_availableCharacters, length);
+        return RandomNumberGenerator.GetString(_alphanumericPlusSymbols, length);
     }
 
 
     //
     // Private methods
     //
-
-    private static string InternalGenerateString(char[] availableCharacters, int length)
-    {
-        // We need to control for modulo bias. Since we can't set the upper limit of bytes generated by
-        //   RandomNumberGenerator, we do the next best thing and generate a uint32 of random data for 
-        //   each character, and then take the modulo of those bytes. This effectively eliminates the
-        //   modulo bias.
-        // See: https://stackoverflow.com/a/1344255
-
-        // Generate 4 bytes of randomness for each character.
-        var numberSize = sizeof(uint);
-
-        var randomBytes = ArrayPool<byte>.Shared.Rent(length * numberSize);
-        try
-        {
-            GenerateRandomBytes(randomBytes, length * numberSize);
-
-            return string.Create(
-                length: length,
-                state: new StringCreateArgs(AvailableCharacters: availableCharacters, RandomBytes: randomBytes, Length: length, NumberSize: numberSize),
-                action: EncodeBytesAsCharacters
-                );
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(randomBytes, clearArray: true);
-        }
-    }
 
     /// <summary>
     /// Fills a span with cryptographically strong random bytes.
@@ -214,23 +172,4 @@ public static class RandomStringHelper
         //   of bytes.
         RandomNumberGenerator.Fill(buffer.Slice(0, length));
     }
-
-    private static void EncodeBytesAsCharacters(Span<char> destSpan, StringCreateArgs args)
-    {
-        // Remember, ArrayPool returns an array with a minimum size that is likely larger than what you
-        //   request, so use the requested string length as the upper bound of the for loop, not the size
-        //   of the random bytes array.
-        var randomBytes = args.RandomBytes.AsSpan();
-
-        for (var ixByte = 0; ixByte < args.Length; ixByte++)
-        {
-            // Get 4 bytes at a time.
-            var randomNumber = BitConverter.ToUInt32(randomBytes.Slice(start: ixByte * args.NumberSize, length: args.NumberSize));
-
-            // Mod by the number of available characters to index into the array.
-            destSpan[ixByte] = args.AvailableCharacters[randomNumber % args.AvailableCharacters.Length];
-        }
-    }
-
-    private record struct StringCreateArgs(char[] AvailableCharacters, byte[] RandomBytes, int Length, int NumberSize);
 }

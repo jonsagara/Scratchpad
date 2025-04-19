@@ -62,7 +62,7 @@ public class RandomStringHelperTests
     public void AllAlphanumericMixedCasePlusDashUnderscoreCharactersAreValid()
     {
         // Make a hash out of available characters.
-        var charLookup = RandomStringHelper._availableCharactersPlusDashUnderscore.ToHashSet();
+        var charLookup = RandomStringHelper._alphanumericPlusDashUnderscore.ToHashSet();
 
         var testChars = new List<char>(RandomStringHelper.AlphabetLower);
         testChars.AddRange(RandomStringHelper.AlphabetLower.ToUpper());
