@@ -71,8 +71,7 @@ module RandomStringHelper =
     /// <param name="byteCount">The number of random bytes to generate.</param>
     /// <returns>The random bytes as a base64 url-encoded string.</returns>
     let generateRandomBase64UrlEncodedString (byteCount: int) =
-        if byteCount <= 0 then
-            raise (ArgumentOutOfRangeException(nameof byteCount, byteCount, $"Invalid {nameof byteCount} value '{byteCount}'. It must be greater than 0."))
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(byteCount, 0, (nameof(byteCount)))
 
         let randomBytes = ArrayPool<byte>.Shared.Rent(byteCount)
         try
@@ -98,8 +97,7 @@ module RandomStringHelper =
     /// <param name="byteCount">The number of random bytes to generate.</param>
     /// <returns>The random bytes as a base64-encoded string.</returns>
     let generateRandomBase64EncodedString (byteCount: int) =
-        if byteCount <= 0 then
-            raise (ArgumentOutOfRangeException(nameof byteCount, byteCount, $"Invalid {nameof byteCount} value '{byteCount}'. It must be greater than 0."))
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(byteCount, 0, (nameof(byteCount)))
 
         let randomBytes = ArrayPool<byte>.Shared.Rent(byteCount)
         try
