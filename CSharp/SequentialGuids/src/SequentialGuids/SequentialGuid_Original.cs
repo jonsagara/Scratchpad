@@ -1,5 +1,6 @@
 ﻿namespace SequentialGuids;
 
+[Obsolete("Use Guid.CreateVersion7")]
 public class SequentialGuid_Original
 {
     static readonly DateTime epoch = new DateTime(1900, 1, 1);

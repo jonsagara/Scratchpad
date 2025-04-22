@@ -2,6 +2,7 @@
 
 namespace SequentialGuids;
 
+[Obsolete("Use Guid.CreateVersion7")]
 public class SequentialGuid_Optimized
 {
     /// <summary>
