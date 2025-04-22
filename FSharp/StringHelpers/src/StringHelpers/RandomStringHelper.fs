@@ -59,17 +59,6 @@ module RandomStringHelper =
         //   of bytes.
         RandomNumberGenerator.Fill(buffer.Slice(0, length))
 
-    /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
-    /// can contain the characters in [a-zA-Z0-9], and optionally '-' and '_'.
-    let private internalGenerateAlphanumericString (includeDashAndUnderscore : bool) (length : int) =
-        
-        let characterSet = 
-            match includeDashAndUnderscore with
-            | true -> _alphanumericPlusDashUnderscore
-            | false -> _alphanumeric
-
-        RandomNumberGenerator.GetString(characterSet, length)
-
 
     //
     // Public functions
@@ -144,22 +133,18 @@ module RandomStringHelper =
     /// can contain the characters in [a-zA-Z0-9].
     /// </summary>
     /// <param name="length">The length of the random string to generate.</param>
+    /// <param name="includeDashAndUnderscore">True to include '-' and '_' in the set of available characters;
+    /// false to exclude them.</param>
     /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9].</returns>
-    let generateAlphanumericString (length: int) =
+    let generateAlphanumericString (length : int) (includeDashAndUnderscore : bool) =
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(length, 0, (nameof length))
+        
+        let characterSet = 
+            match includeDashAndUnderscore with
+            | true -> _alphanumericPlusDashUnderscore
+            | false -> _alphanumeric
 
-        internalGenerateAlphanumericString false length
-
-    /// <summary>
-    /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that
-    /// can contain the characters in [a-zA-Z0-9-_].
-    /// </summary>
-    /// <param name="length">The length of the random string to generate.</param>
-    /// <returns>The random bytes encoded as a string that can contain the characters in [a-zA-Z0-9-_].</returns>
-    let generateAlphanumericStringWithDashUnderscore (length: int) =
-        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(length, 0, (nameof length))
-
-        internalGenerateAlphanumericString true length
+        RandomNumberGenerator.GetString(characterSet, length)
 
     /// <summary>
     /// Generate a cryptographically-strong array of random bytes and return them encoded as a string that

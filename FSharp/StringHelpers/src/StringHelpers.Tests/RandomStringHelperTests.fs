@@ -132,13 +132,13 @@ type RandomStringHelperTests() =
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateAlphanumericString_InvalidLengthThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericString invalidByteCount |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericString invalidByteCount false |> ignore)
 
     [<Theory>]
     [<InlineData(-1)>]
     [<InlineData(0)>]
     member this.generateAlphanumericStringWithDashUnderscore_InvalidLengthThrows (invalidByteCount : int) =
-        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericStringWithDashUnderscore invalidByteCount |> ignore)
+        Assert.Throws<ArgumentOutOfRangeException>(fun () -> RandomStringHelper.generateAlphanumericString invalidByteCount true |> ignore)
 
     [<Theory>]
     [<InlineData(-1)>]
@@ -204,7 +204,7 @@ type RandomStringHelperTests() =
     [<InlineData(128)>]
     [<InlineData(256)>]
     member this.generateAlphanumericString_ReturnedStringLengthMatches (length : int) =
-        let generatedString = RandomStringHelper.generateAlphanumericString length
+        let generatedString = RandomStringHelper.generateAlphanumericString length false
 
         Assert.NotNull(generatedString)
         Assert.Equal(length, generatedString.Length)
@@ -232,7 +232,7 @@ type RandomStringHelperTests() =
     member this.generateAlphanumericString_ReturnsStringWithNoDashesAndNoUnderscores () =
         [| 0 .. 99 |]
         |> Array.iter (fun ixIteration ->
-            let randomString = RandomStringHelper.generateAlphanumericString 64
+            let randomString = RandomStringHelper.generateAlphanumericString 64 false
 
             Assert.NotNull(randomString)
             Assert.DoesNotContain("-", randomString)
